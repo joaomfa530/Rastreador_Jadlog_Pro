@@ -1,5 +1,29 @@
-.env
-.venv/
 data/
 logs/
+
+
+# --- Python ---
 __pycache__/
+*.pyc
+
+# --- Ambientes Virtuais ---
+.venv/
+venv/
+env/
+.env
+# --- Dados (Excel e CSV) ---
+# Ignorar todos os Excel e CSV para proteger dados da Jadlog
+*.xlsx
+*.csv
+
+
+# --- PyInstaller (Executáveis) ---
+build/
+dist/
+*.spec
+
+# --- IDEs e Sistema ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

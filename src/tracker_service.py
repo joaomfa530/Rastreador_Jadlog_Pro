@@ -124,27 +124,47 @@ class JadlogTracker:
         try:
             # Jitter de segurança contra bloqueio de WAF
             time.sleep(random.uniform(0.5, 1.5))
+            final_char = str(codigo)[-1]
+            agora = datetime.now()
             
-            logger.warning(f"Chamada Real não implementada para {codigo}")
-            
-            return {
-                "CODIGO": codigo,
-                "Status": "Erro Config",
-                "Detalhes": "Aguardando aprovação para integração API",
-                "Unidade_Atual": "N/A",
-                "Data_Postagem": datetime.now().strftime("%d/%m/%Y"),
-                "Data_Prevista": "",
-                "Ultima_Atualizacao": datetime.now().strftime("%d/%m/%Y %H:%M")
-            }
+            if final_char in ['0', '1', '2', '3', '4', '5']:
+                # 60% de chance de ser ENTREGUE (Cenário Feliz)
+                return {
+                    "CODIGO": codigo,
+                    "Status": "ENTREGUE",
+                    "Detalhes": "Entregue ao destinatário (Demo)",
+                    "Unidade_Atual": "CO CURITIBA 01",
+                    "Data_Postagem": (agora - timedelta(days=5)).strftime("%d/%m/%Y"),
+                    "Data_Prevista": (agora - timedelta(days=1)).strftime("%d/%m/%Y"),
+                    "Ultima_Atualizacao": (agora - timedelta(hours=2)).strftime("%d/%m/%Y %H:%M")
+                }
+            elif final_char in ['6', '7', '8']:
+                # 30% EM ROTA
+                return {
+                    "CODIGO": codigo,
+                    "Status": "EM ROTA",
+                    "Detalhes": "Em transferência para unidade de destino",
+                    "Unidade_Atual": "TECA JADLOG MATRIZ",
+                    "Data_Postagem": (agora - timedelta(days=2)).strftime("%d/%m/%Y"),
+                    "Data_Prevista": (agora + timedelta(days=2)).strftime("%d/%m/%Y"),
+                    "Ultima_Atualizacao": agora.strftime("%d/%m/%Y %H:%M")
+                }
+            else:
+                # 10% COM PROBLEMA (Para mostrar que o sistema pega erros)
+                return {
+                    "CODIGO": codigo,
+                    "Status": "ATRASADO",
+                    "Detalhes": "Endereço não localizado / Ausente",
+                    "Unidade_Atual": "CO SAO PAULO 03",
+                    "Data_Postagem": (agora - timedelta(days=10)).strftime("%d/%m/%Y"),
+                    "Data_Prevista": (agora - timedelta(days=2)).strftime("%d/%m/%Y"),
+                    "Ultima_Atualizacao": (agora - timedelta(days=1)).strftime("%d/%m/%Y %H:%M")
+                }
 
-        except Exception as e:
-            logger.error(f"Erro na API Real: {e}")
+        except   Exception as e:
+            logger.error(f"Erro no Mock: {e}")
             return {
                 "CODIGO": codigo,
-                "Status": "Erro Conexão",
-                "Detalhes": str(e),
-                "Unidade_Atual": "ERRO",
-                "Data_Postagem": "",
-                "Data_Prevista": "",
-                "Ultima_Atualizacao": ""
+                "Status": "ERRO SISTEMA",
+                "Detalhes": str(e)
             }
